@@ -1,0 +1,15 @@
+{
+  "name": "ai-builders-monorepo",
+  "version": "1.0.0",
+  "scripts": {
+    "install:server": "cd AI-BUILDERS/server && npm install",
+    "install:client": "cd AI-BUILDERS/client && npm install",
+    "build:server": "cd AI-BUILDERS/server && npm run build",
+    "build:client": "cd AI-BUILDERS/client && npm run build",
+    "build": "npm run build:server && npm run build:client"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}

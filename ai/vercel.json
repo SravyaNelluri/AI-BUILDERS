@@ -1,0 +1,30 @@
+{
+  "buildCommand": "cd AI-BUILDERS/server && npm run build && cd ../client && npm run build",
+  "installCommand": "cd AI-BUILDERS/server && npm install && cd ../client && npm install",
+  "outputDirectory": "AI-BUILDERS/client/dist",
+  "functions": {
+    "AI-BUILDERS/server/server.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/AI-BUILDERS/server/server.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://ai-website-builder-jugh-4ixbapu45-sravya-nelluris-projects.vercel.app",
+    "DATABASE_URL": "@database_url",
+    "BETTER_AUTH_SECRET": "@better_auth_secret",
+    "BETTER_AUTH_URL": "@better_auth_url",
+    "AI_API_KEY": "@ai_api_key",
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
+  },
+  "regions": ["sfo1"]
+}
