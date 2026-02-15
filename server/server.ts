@@ -1,45 +1,9 @@
 import dotenv from 'dotenv';
-import path from 'path';
-import fs from 'fs';
 
-// Load .env file manually
-const __dirname = process.cwd();
-const envPath = path.join(__dirname, '.env');
-
-console.log('[server] Looking for .env at:', envPath);
-
-try {
-    if (fs.existsSync(envPath)) {
-        const envContent = fs.readFileSync(envPath, 'utf-8');
-        console.log('[server] .env file found, size:', envContent.length, 'bytes');
-        
-        // Parse line by line to handle any encoding issues
-        const lines = envContent.split(/\r?\n/);
-        let loadedCount = 0;
-        
-        lines.forEach(line => {
-            line = line.trim();
-            if (line && !line.startsWith('#')) {
-                const [key, ...valueParts] = line.split('=');
-                if (key && valueParts.length > 0) {
-                    const value = valueParts.join('=').trim();
-                    process.env[key.trim()] = value;
-                    loadedCount++;
-                }
-            }
-        });
-        
-        console.log('[server] Loaded', loadedCount, 'environment variables');
-        console.log('[server] DATABASE_URL:', process.env.DATABASE_URL ? '✓ SET' : '✗ NOT SET');
-        console.log('[server] BETTER_AUTH_SECRET:', process.env.BETTER_AUTH_SECRET ? '✓ SET' : '✗ NOT SET');
-        console.log('[server] BETTER_AUTH_URL:', process.env.BETTER_AUTH_URL ? '✓ SET' : '✗ NOT SET');
-    } else {
-        console.error('[server] ERROR: .env file not found at:', envPath);
-        console.error('[server] Current working directory:', __dirname);
-        console.error('[server] Files in current directory:', fs.readdirSync(__dirname).slice(0, 10));
-    }
-} catch (error) {
-    console.error('[server] Error reading .env file:', error);
+// Only load .env file in development (Vercel provides env vars automatically)
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+    console.log('[server] Loaded .env file for development');
 }
 
 import express, { Request, Response } from 'express';
@@ -126,5 +90,5 @@ if (!process.env.VERCEL) {
     });
 }
 
-// Export for Vercel (CommonJS)
-module.exports = app;
+// Export for Vercel
+export default app;
