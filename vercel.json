@@ -24,7 +24,11 @@
     "BETTER_AUTH_URL": "@better_auth_url",
     "AI_API_KEY": "@ai_api_key",
     "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
+    "TRUSTED_ORIGINS": "@trusted_origins",
+    "AI_MODEL": "openai/gpt-4o-mini",
+    "AI_MAX_TOKENS": "2000",
+    "NODE_ENV": "production"
   },
   "regions": ["sfo1"]
 }
