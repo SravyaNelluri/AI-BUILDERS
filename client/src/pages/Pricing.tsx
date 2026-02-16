@@ -16,23 +16,42 @@ const Pricing = () => {
 
   const {data: session} =  authClient.useSession()
   const [plans]=React.useState<Plan[]>(appPlans)
+  const [loadingPlan, setLoadingPlan] = React.useState<string | null>(null)
+  
   const handlePurchase= async (planId: string) =>{
    try{
-    if(!session?.user) return toast ('please login to purchase credits')
-      const {data} = await api.post('/user/purchase-credits',{planId})
-    window.location.href= data.payment_link;
+    if(!session?.user) {
+      toast.error('Please login to purchase credits')
+      return
+    }
+    
+    setLoadingPlan(planId)
+    
+    // Create Stripe checkout session
+    const {data} = await api.post('/user/purchase-credits',{planId})
+    
+    // Redirect to Stripe checkout
+    if(data.payment_link){
+      toast.success('Redirecting to payment...')
+      window.location.href = data.payment_link
+    } else {
+      toast.error('Failed to create payment session')
+      setLoadingPlan(null)
+    }
+    
    }catch(error: any){
-     toast.error(error?.response?.data?.message || 'Something went wrong during purchase')
-     console.log(error);
+     toast.error(error?.response?.data?.message || 'Something went wrong')
+     console.error('Payment error:', error);
+     setLoadingPlan(null)
   }
 
   }
   return (
     <>
-    <div className="w-full max-w-5xl mx-auto z-20 max-pd-4 min-h-[800vh]">
+    <div className="w-full max-w-5xl mx-auto z-20 px-4 min-h-[80vh]">
       <div className='text-center mt-16'>
         <h2 className='text-gray-100 text-3xl font-medium'>
-         Chosse Your Plan
+         Choose Your Plan
         </h2>
         <p className='text-gray-400  text-sm max-w-md mx-auto mt-2'>
           Start for free and scale up as you grow. Find the perfect plan for your content creation needs.
@@ -62,8 +81,22 @@ const Pricing = () => {
                                         </li>
                                     ))}
                                 </ul>
-                                <button onClick={() => handlePurchase(plan.id)} className="w-full py-2 px-4 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-sm rounded-md transition-all">
-                                    Buy Now
+                                <button 
+                                    onClick={() => handlePurchase(plan.id)} 
+                                    disabled={loadingPlan === plan.id}
+                                    className="w-full py-2 px-4 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-sm rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {loadingPlan === plan.id ? (
+                                        <>
+                                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        'Buy Now'
+                                    )}
                                 </button>
                             </div>
                         ))}

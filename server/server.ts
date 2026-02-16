@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 
-// Only load .env file in development (Vercel provides env vars automatically)
-if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+// Only load .env file in development
+// (Vercel & Render provide env vars automatically in production)
+if (!process.env.VERCEL && !process.env.RENDER && process.env.NODE_ENV !== 'production') {
     dotenv.config();
     console.log('[server] Loaded .env file for development');
 }
@@ -83,12 +84,13 @@ app.use((err: any, req: Request, res: Response, next: any) => {
     });
 });
 
-// Start the server in non-serverless environments (Render/Railway/etc.)
+// Start the server in non-serverless environments (Render, Railway, Traditional Node)
+// Skip for Vercel (uses serverless functions)
 if (!process.env.VERCEL) {
     app.listen(port, () => {
-        console.log(`Server is running at http://localhost:${port}`);
+        console.log(`[server] Running on http://localhost:${port} in ${process.env.NODE_ENV || 'development'} mode`);
     });
 }
 
-// Export for Vercel
+// Export for Vercel serverless functions
 export default app;
