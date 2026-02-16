@@ -105,7 +105,7 @@ const Projects = () => {
       )
      }
 
-  function updateDevice(arg0: string): void {
+  function updateDevice(_arg0: string): void {
     throw new Error('Funplemented.')
   }
 

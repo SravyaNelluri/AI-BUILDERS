@@ -97,7 +97,7 @@ const View = () => {
         setProject(data.project)
         
         // Check if new content has been generated
-        const hasNewConversation = data.project.conversation.length > previousConversationLength
+        const _hasNewConversation = data.project.conversation.length > previousConversationLength
         const hasNewCode = (data.project.current_code?.length || 0) > previousCodeLength
         
         // If we have the initial code generated or significant updates, stop generating
