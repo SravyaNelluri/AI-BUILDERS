@@ -327,8 +327,14 @@ export const purchaseCredits = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
+    // Validate Stripe key
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('[Stripe] STRIPE_SECRET_KEY not configured');
+      return res.status(500).json({ message: 'Payment system not configured' });
+    }
+
     const { planId } = req.body as { planId: keyof typeof plans };
-    const origin = req.headers.origin as string;
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || process.env.BETTER_AUTH_URL?.replace('/api', '').replace(':3000', '') || 'https://ai-builderss.netlify.app';
 
     const plan: Plan = plans[planId];
     if (!plan) {
@@ -346,9 +352,11 @@ export const purchaseCredits = async (req: Request, res: Response) => {
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
+    console.log(`[Stripe] Creating checkout session for user ${userId}, plan: ${planId}, origin: ${origin}`);
+
     const session = await stripe.checkout.sessions.create({
       success_url: `${origin}/loading`,
-      cancel_url: `${origin}`,
+      cancel_url: `${origin}/pricing`,
       line_items: [
         {
           price_data: {
@@ -370,12 +378,14 @@ export const purchaseCredits = async (req: Request, res: Response) => {
     });
 
     if (!session.url) {
+      console.error('[Stripe] Session created but no URL returned');
       return res.status(500).json({ message: 'Stripe session URL not created' });
     }
 
+    console.log(`[Stripe] Checkout session created successfully: ${session.id}`);
     return res.json({ payment_link: session.url });
   } catch (error: any) {
-    console.log(error.code || error.message);
+    console.error('[Stripe] Error creating checkout session:', error.message);
     return res.status(500).json({ message: error.message });
   }
 };
