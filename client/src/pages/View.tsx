@@ -88,7 +88,6 @@ const View = () => {
   useEffect(() => {
     if (!isGenerating || !projectId) return
 
-    let previousConversationLength = project?.conversation?.length || 0
     let previousCodeLength = project?.current_code?.length || 0
 
     const interval = setInterval(async () => {
@@ -111,7 +110,6 @@ const View = () => {
           }
         }
         
-        previousConversationLength = data.project.conversation.length
       } catch (error) {
         console.error('Error polling project:', error)
       }

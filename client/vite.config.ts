@@ -14,5 +14,15 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     strictPort: false,
+  },
+  build: {
+    rollupOptions: {
+      external: ['react-hook-form'],
+      output: {
+        globals: {
+          'react-hook-form': 'ReactHookForm'
+        }
+      }
+    }
   }
 })
