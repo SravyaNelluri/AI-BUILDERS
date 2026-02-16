@@ -28,6 +28,8 @@ Thumbs.db
 
 # Prisma
 server/prisma/migrations/
+server/generated/
+.prisma/
 
 # Vercel
 .vercel
