@@ -1,0 +1,14 @@
+[build]
+  base = "client"
+  command = "npm install && npm run build"
+  functions = "netlify/functions"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_VERSION = "11"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
