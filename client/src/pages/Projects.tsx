@@ -105,13 +105,9 @@ const Projects = () => {
       )
      }
 
-  function updateDevice(_arg0: string): void {
-    throw new Error('Funplemented.')
-  }
-
   return project ?(
     <div className='flex flex-col h-screen w-full bg-gray-900 text-white'>
-      {/* build navbar  */}
+      {/* build navbar  */}}
     <div className='flex max-sm:flex-col sm:items-center gap-4 px-4 py-2 no-scrollbar'>
     {/* leftt */}
     <div className='flex items-center gap-2 sm:min-w-90 text-nowrap'>
