@@ -13,5 +13,5 @@ projectRouter.get('/preview/:projectId', protect, getProjectPreview)
 projectRouter.get('/published', getPublishedProjects)
 projectRouter.get('/published/:projectId', getProjectById)
 
-module.exports = projectRouter
+export default projectRouter;
 

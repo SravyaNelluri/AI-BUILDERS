@@ -13,4 +13,5 @@ const openai = new OpenAI({
     "X-Title": "AI Portfolio Generator"
   }
 });
-module.exports = openai;
+
+export default openai;

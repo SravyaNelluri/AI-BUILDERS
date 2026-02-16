@@ -11,4 +11,5 @@ userRouter.get('/project/:projectId', protect, getUserProject);
 userRouter.get('/projects', protect, getUserProjects);
 userRouter.post('/project-toggle/:projectId', protect, togglePublish);
 userRouter.post('/purchase-credits', protect, purchaseCredits); 
-module.exports = userRouter;
+
+export default userRouter;
