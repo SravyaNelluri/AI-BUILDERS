@@ -29,18 +29,23 @@ git push origin main
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Click **Import Git Repository**
 3. Select your repo
-4. **Don't change any build settings** (already configured in vercel.json)
+4. **Configure Build Settings**:
+   - **Framework Preset**: Other
+   - **Root Directory**: `./`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `client/dist`
+   - **Install Command**: `npm install --legacy-peer-deps`
 
 ---
 
 ### 3️⃣ Add Environment Variables
 
-In Vercel dashboard, add these variables:
+In Vercel dashboard → Settings → Environment Variables, add these:
 
 **Required:**
 ```
 DATABASE_URL=postgresql://...
-BETTER_AUTH_SECRET=(min 32 characters)
+BETTER_AUTH_SECRET=(min 32 characters - generate a random string)
 BETTER_AUTH_URL=https://your-app.vercel.app
 TRUSTED_ORIGINS=https://your-app.vercel.app
 OPENROUTER_API_KEY=sk-or-v1-...
@@ -48,9 +53,10 @@ STRIPE_SECRET_KEY=sk_test_... or sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 VITE_BASEURL=https://your-app.vercel.app/api
 VITE_BETTER_AUTH_URL=https://your-app.vercel.app
+NODE_ENV=production
 ```
 
-**Note:** For first deployment, you can use placeholder URLs, then update them after getting your Vercel URL.
+**Note:** For first deployment, you can use placeholder URLs like `https://placeholder.com`, then update them after getting your Vercel URL.
 
 ---
 
