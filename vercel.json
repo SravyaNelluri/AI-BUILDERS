@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "buildCommand": "cd server && npm install && npm run build && cd ../client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "echo 'Using custom buildCommand'",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "BETTER_AUTH_SECRET": "@better_auth_secret",
+    "BETTER_AUTH_URL": "https://ai-builders-two.vercel.app",
+    "AI_API_KEY": "@ai_api_key",
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
+    "TRUSTED_ORIGINS": "https://ai-builders-two.vercel.app",
+    "AI_MODEL": "openai/gpt-4o-mini",
+    "AI_MAX_TOKENS": "2000",
+    "NODE_ENV": "production",
+    "PORT": "3000"
+  }
+}

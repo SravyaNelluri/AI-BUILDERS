@@ -30,18 +30,40 @@ process.on('uncaughtException', (err) => {
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 const port = Number(process.env.PORT) || 3000;
-const corsOptions ={
-    origin: process.env.TRUSTED_ORIGINS?.split(',').map(origin => origin.trim()) || [],
-    credentials:true,          
-      //access-control-allow-credentials:true
-}
+
+// CORS configuration - allow Vercel domains and configured origins
+const allowedOrigins = process.env.TRUSTED_ORIGINS?.split(',').map(origin => origin.trim()) || [
+    'http://localhost:5173',
+    'http://localhost:5174', 
+    'http://localhost:3000'
+];
+
+const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+        
+        // Allow configured origins or any Vercel deployment
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.vercel.app')) {
+            callback(null, true);
+        } else {
+            console.log('[server] CORS blocked origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+};
 
 app.use(cors(corsOptions));
+
+// Stripe requires the raw body for signature verification.
 app.post('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 let authHandlerPromise: Promise<(req: Request, res: Response) => unknown> | null = null;
 const getAuthHandler = async () => {
@@ -63,7 +85,6 @@ app.use('/api/auth', (req: Request, res: Response, next) => {
     }).catch(next);
 });
 
-app.use(express.json({ limit: '50mb' }));
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is Live!');
 });
