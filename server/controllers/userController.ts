@@ -354,36 +354,49 @@ export const purchaseCredits = async (req: Request, res: Response) => {
 
     console.log(`[Stripe] Creating checkout session for user ${userId}, plan: ${planId}, origin: ${origin}`);
 
-    const session = await stripe.checkout.sessions.create({
-      success_url: `${origin}/loading`,
-      cancel_url: `${origin}/pricing`,
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `AISiteBuilder- ${plan.credits} credits`,
+    try {
+      const session = await stripe.checkout.sessions.create({
+        success_url: `${origin}/loading`,
+        cancel_url: `${origin}/pricing`,
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: `AISiteBuilder- ${plan.credits} credits`,
+              },
+              unit_amount: Math.floor(transaction.amount) * 100,
             },
-            unit_amount: Math.floor(transaction.amount) * 100,
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        mode: 'payment',
+        metadata: {
+          transactionId: transaction.id,
+          appId: 'ai-site-builder',
         },
-      ],
-      mode: 'payment',
-      metadata: {
-        transactionId: transaction.id,
-        appId: 'ai-site-builder',
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
-    });
+        expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+      });
 
-    if (!session.url) {
-      console.error('[Stripe] Session created but no URL returned');
-      return res.status(500).json({ message: 'Stripe session URL not created' });
+      if (!session.url) {
+        console.error('[Stripe] Session created but no URL returned');
+        return res.status(500).json({ message: 'Stripe session URL not created' });
+      }
+
+      console.log(`[Stripe] Checkout session created successfully: ${session.id}`);
+      return res.json({ payment_link: session.url });
+    } catch (stripeError: any) {
+      console.error('[Stripe] Stripe API Error:', {
+        type: stripeError.type,
+        message: stripeError.message,
+        code: stripeError.code,
+        statusCode: stripeError.statusCode,
+        raw: stripeError.raw
+      });
+      return res.status(500).json({ 
+        message: `Stripe Error: ${stripeError.message || 'Failed to create checkout session'}` 
+      });
     }
-
-    console.log(`[Stripe] Checkout session created successfully: ${session.id}`);
-    return res.json({ payment_link: session.url });
   } catch (error: any) {
     console.error('[Stripe] Error creating checkout session:', error.message);
     return res.status(500).json({ message: error.message });

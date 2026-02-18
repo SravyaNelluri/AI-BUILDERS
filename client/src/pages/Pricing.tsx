@@ -27,21 +27,31 @@ const Pricing = () => {
     
     setLoadingPlan(planId)
     
+    console.log('[Purchase] Starting purchase for plan:', planId);
+    
     // Create Stripe checkout session
     const {data} = await api.post('/user/purchase-credits',{planId})
+    
+    console.log('[Purchase] Response received:', data);
     
     // Redirect to Stripe checkout
     if(data.payment_link){
       toast.success('Redirecting to payment...')
+      console.log('[Purchase] Redirecting to:', data.payment_link);
       window.location.href = data.payment_link
     } else {
+      console.error('[Purchase] No payment link in response:', data);
       toast.error('Failed to create payment session')
       setLoadingPlan(null)
     }
     
    }catch(error: any){
-     toast.error(error?.response?.data?.message || 'Something went wrong')
-     console.error('Payment error:', error);
+     console.error('[Purchase] Full error:', error);
+     console.error('[Purchase] Error response:', error?.response);
+     console.error('[Purchase] Error data:', error?.response?.data);
+     const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong';
+     toast.error(errorMessage)
+     console.error('Payment error:', errorMessage);
      setLoadingPlan(null)
   }
 
