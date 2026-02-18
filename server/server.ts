@@ -79,10 +79,13 @@ const getAuthHandler = async () => {
     return authHandlerPromise;
 };
 
-app.use('/api/auth', (req: Request, res: Response, next) => {
-    getAuthHandler().then(handler => {
-        handler(req, res);
-    }).catch(next);
+app.use('/api/auth', async (req: Request, res: Response, next) => {
+    try {
+        const handler = await getAuthHandler();
+        return handler(req, res);
+    } catch (error) {
+        next(error);
+    }
 });
 
 app.get('/', (req: Request, res: Response) => {
