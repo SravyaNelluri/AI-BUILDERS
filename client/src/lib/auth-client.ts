@@ -1,10 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
-const authClientBaseURL =
-  import.meta.env.VITE_BASEURL || "https://ai-builders-2.onrender.com";
-
 export const authClient = createAuthClient({
-  baseURL: `${authClientBaseURL}/api/auth`,
+  baseURL: "https://ai-builders-2.onrender.com/api/auth",
   fetchOptions: {
     credentials: "include",
   },
