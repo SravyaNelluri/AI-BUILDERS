@@ -39,7 +39,7 @@ const app = express();
 const port = Number(process.env.PORT) || 3000;
 
 // ✅ CORS configuration
-// Add frontend URL in Render env:
+// In Render backend env, add:
 // TRUSTED_ORIGINS=https://ai-builders-1.onrender.com
 const allowedOrigins =
   process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) || [
@@ -59,7 +59,7 @@ const corsOptions: cors.CorsOptions = {
       return callback(null, true);
     }
 
-    // ✅ Allow localhost, configured origins, Vercel, and Render domains
+    // Allow trusted frontend URLs
     if (
       allowedOrigins.includes(origin) ||
       origin.includes(".vercel.app") ||
@@ -76,10 +76,16 @@ const corsOptions: cors.CorsOptions = {
   allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
 };
 
+// ✅ Apply CORS before all routes
 app.use(cors(corsOptions));
 
-// ✅ Handle preflight requests
-app.options("*", cors(corsOptions));
+// ✅ Safe preflight handling WITHOUT app.options("*")
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 // Stripe requires raw body for signature verification
 app.post("/api/stripe", express.raw({ type: "application/json" }), stripeWebhook);
