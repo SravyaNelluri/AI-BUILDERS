@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "moduleResolution": "node10",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./",
     "strict": false,
@@ -11,8 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": false,
     "resolveJsonModule": true,
-    "noEmit": false,
-    "ignoreDeprecations": "6.0"
+    "noEmit": false
   },
   "ts-node": {
     "esm": false,
